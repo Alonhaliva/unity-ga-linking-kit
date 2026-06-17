@@ -62,6 +62,12 @@
   .tag{display:inline-block;background:var(--pill);color:var(--muted);font-size:12px;
     font-weight:600;padding:2px 9px;border-radius:20px;margin-left:8px;vertical-align:middle}
   .tip{font-size:14px;color:var(--muted);font-style:italic;margin-top:14px}
+  .callout{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 16px;
+    background:var(--accent-soft);border:1px solid #d6e6f7;border-radius:10px;font-size:14.5px;
+    color:#2b3138;line-height:1.55}
+  .callout svg{flex:0 0 auto;width:20px;height:20px;stroke:var(--accent);margin-top:1px}
+  .callout a{color:var(--accent);font-weight:600;text-decoration:none}
+  .callout a:hover{text-decoration:underline}
   footer{margin-top:34px;text-align:center;color:var(--muted);font-size:13px}
   .empty{display:none;text-align:center;color:var(--muted);padding:30px;font-size:15px}
   @media (max-width:560px){.ans-inner{padding-left:18px}h1{font-size:25px}}
@@ -106,6 +112,14 @@
       <li>Make sure the <b>DDF toggle</b> (“Unity Ads Performance”) is on — needs an Org Owner.</li>
       <li><b>Don’t freak out about delays.</b> Reporting runs ~48h behind, refreshes around 11:45 PT daily. New links take a couple days to show in the sheet/Looker.</li>
     </ul>
+    <div class="callout">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M5 12V5a2 2 0 0 1 2-2h7l5 5v4"/><path d="M5 16h6m-3-3v6"/></svg>
+      <div>
+        <b>Auto-fix didn’t do the trick?</b> There’s a manual route. The
+        <a href="https://docs.google.com/document/d/13k532RP67JFDH-958sDHGscU1gfNnPgWDTak6N8Xs0I/edit?tab=t.0" target="_blank" rel="noopener">Manual BigQuery Link Fix Guide</a>
+        walks the client through the exact steps by hand — granting the Unity service account GA Editor + BigQuery Data Viewer access and checking the export settings. Good to keep in your back pocket for trickier clients.
+      </div>
+    </div>
   </div>
 
   <h2>Good questions to ask before pushing <span class="tag">Tatiana H’s idea</span></h2>
