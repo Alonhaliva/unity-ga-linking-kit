@@ -12,10 +12,29 @@
     --radius:14px; --shadow:0 1px 3px rgba(20,30,45,.06),0 6px 24px rgba(20,30,45,.05);
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     line-height:1.6;-webkit-font-smoothing:antialiased;padding:32px 16px 64px}
-  .wrap{max-width:760px;margin:0 auto}
+  .layout{max-width:1040px;margin:0 auto;display:flex;gap:34px;align-items:flex-start}
+  .wrap{flex:1;min-width:0;max-width:760px}
+  .nav{position:sticky;top:28px;flex:0 0 200px;display:flex;flex-direction:column;gap:2px}
+  .nav-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--muted);margin:6px 0 10px;padding-left:13px}
+  .nav a{display:block;padding:8px 13px;border-radius:8px;font-size:14px;color:var(--muted);
+    text-decoration:none;border-left:2px solid transparent;transition:.12s;line-height:1.35}
+  .nav a:hover{background:var(--card);color:var(--ink)}
+  .nav a.active{color:var(--accent);background:var(--accent-soft);
+    border-left-color:var(--accent);font-weight:600}
+  #pitch,#pushback,#setup,#breaks,#questions{scroll-margin-top:24px}
+  @media (max-width:860px){
+    .layout{flex-direction:column;gap:14px}
+    .nav{position:static;flex:none;flex-direction:row;gap:6px;width:100%;
+      overflow-x:auto;padding-bottom:4px}
+    .nav-title{display:none}
+    .nav a{white-space:nowrap;border-left:none;background:var(--card);border:1px solid var(--line)}
+    .nav a.active{border-color:var(--accent)}
+  }
   header{margin-bottom:22px}
   h1{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.4px}
   .sub{color:var(--muted);font-size:15px}
@@ -74,10 +93,19 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="layout">
+  <aside class="nav">
+    <div class="nav-title">On this page</div>
+    <a href="#pitch" data-target="pitch">The short pitch</a>
+    <a href="#pushback" data-target="pushback">When clients push back</a>
+    <a href="#setup" data-target="setup">Setup</a>
+    <a href="#breaks" data-target="breaks">If something breaks</a>
+    <a href="#questions" data-target="questions">Questions to ask</a>
+  </aside>
+  <div class="wrap">
   <header>
     <h1>GA Linking — Cheat Sheet</h1>
-    <div class="sub">Quick answers for client chats. From what Tatiana Hoffman and Tatiana Ventsova told us.</div>
+    <div class="sub">Info I gathered from Slack channels, client questions, and from Tatiana Hoffman and Tatiana Ventsova.</div>
   </header>
 
   <div class="search">
@@ -85,16 +113,16 @@
     <input id="q" type="text" placeholder="Search a question or topic…" autocomplete="off">
   </div>
 
-  <div class="pitch" data-search="short pitch elevator">
+  <div class="pitch" id="pitch" data-search="short pitch elevator">
     <div class="lbl">The short pitch</div>
     <p>“Linking your Google Analytics takes under a minute and uses data you’re already collecting. It just gives our system more to work with so it makes better calls on which users and placements are worth more. Easy win, basically no effort on your end.”</p>
   </div>
 
-  <h2>When clients push back</h2>
+  <h2 id="pushback">When clients push back</h2>
   <div id="faq"></div>
   <div class="empty" id="empty">No match — try another word.</div>
 
-  <h2>Setup — what the client needs</h2>
+  <h2 id="setup">Setup — what the client needs</h2>
   <div class="panel" data-search="setup permissions access admin gcp bigquery sdk">
     <h3>The person doing the linking needs all three</h3>
     <ul>
@@ -105,7 +133,7 @@
     <p class="tip">Also: be on the latest Unity Ads SDK / Bold. And tell them to <b>screen-record it</b> — makes fixing any hiccup way easier.</p>
   </div>
 
-  <h2>If something breaks</h2>
+  <h2 id="breaks">If something breaks</h2>
   <div class="panel" data-search="troubleshoot fix data not flowing auto-fix ddf delay 48 hours looker">
     <ul>
       <li><b>Linked but no data showing?</b> Project Settings → Developer Data → next to “Service Account BigQuery Access” → Run Auto-fix. Heads up: the fix isn’t retroactive, so they have to re-run it.</li>
@@ -122,17 +150,18 @@
     </div>
   </div>
 
-  <h2>Good questions to ask before pushing <span class="tag">Tatiana H’s idea</span></h2>
+  <h2 id="questions">Good questions to ask before pushing <span class="tag">Tatiana H’s idea</span></h2>
   <div class="panel" data-search="discovery questions ask survey">
     <ul>
       <li>How useful is GA data to you today?</li>
       <li>How does it fit with the other signals you use?</li>
       <li>What data do you lean on most, and why?</li>
     </ul>
-    <p class="tip">Tip from Tatiana V: with tricky/sensitive clients, wait till the fix is fully confirmed before re-approaching. With the easy ones, just go.</p>
+    <p class="tip">Tip from Tatiana V (for clients who’ve already connected but hit a debug / data-flow issue): with the tricky/sensitive ones, wait till the fix is fully confirmed before re-approaching. With the easy ones, just go.</p>
   </div>
 
   <footer>Internal reference · keep it casual, keep it human</footer>
+  </div>
 </div>
 
 <script>
@@ -187,6 +216,17 @@ FAQ.forEach((item,i)=>{
     });
   });
 });
+
+const navLinks=[...document.querySelectorAll('.nav a')];
+const sections=navLinks.map(l=>document.getElementById(l.dataset.target)).filter(Boolean);
+function setActive(id){navLinks.forEach(l=>l.classList.toggle('active',l.dataset.target===id));}
+function syncNav(){
+  const cur=sections.filter(s=>s.getBoundingClientRect().top<160).pop()||sections[0];
+  if(cur) setActive(cur.id);
+}
+window.addEventListener('scroll',syncNav,{passive:true});
+navLinks.forEach(l=>l.addEventListener('click',()=>setActive(l.dataset.target)));
+syncNav();
 
 const search=document.getElementById('q'), empty=document.getElementById('empty');
 search.addEventListener('input',()=>{
